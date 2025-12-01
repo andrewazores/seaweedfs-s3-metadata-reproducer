@@ -1,0 +1,12 @@
+Quarkus (Java)-based reproducer for SeaweedFS S3 Object Tagging bug.
+
+`main` branch deploys a `localstack` container for S3 as a sanity test.
+
+`seaweed` branch deploys a SeaweedFS-based container with tiny S3 config layer to test a simple workflow:
+
+1. upload an object file to S3 with a metadata Tag
+2. download file content and assert it's as expected
+3. download file Tagging and assert it's as expected
+4. delete file
+
+Check out `seaweed` branch and run `./test.bash 4.00` to run this test against SeaweedFS 4.00, which should pass. Then try with `./test.bash 4.01`, which is observed to fail.
