@@ -35,7 +35,7 @@ class StorageResourceTest {
             .when()
             .get(API_PATH + "/meta")
             .then()
-            .body(Matchers.equalTo("[Tag(Key=hello, Value=world)]"))
+            .body(Matchers.equalTo("{hello=world}"))
             .statusCode(200);
 
         given()

@@ -31,7 +31,7 @@ public class S3Storage
                 new GenericContainer<>(DockerImageName.parse(IMAGE_NAME))
                         .withExposedPorts(S3_PORT)
                         .withEnv(envMap)
-                        .withTmpFs(Map.of("/data", "rw"))
+                        .withTmpFs(Map.of("/data", "rw,noexec,nosuid,size=65536k"))
                         .withCommand("server", "-s3", "-s3.config", "/etc/storage.conf.json")
                         .waitingFor(Wait.forLogMessage(".*Start Seaweed S3 API Server.*", 1));
         containerNetworkId.ifPresent(container::withNetworkMode);

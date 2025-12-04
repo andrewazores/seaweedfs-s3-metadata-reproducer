@@ -3,6 +3,8 @@ package org.acme;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -21,6 +23,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectTaggingRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.Tag;
@@ -30,6 +33,7 @@ import software.amazon.awssdk.services.s3.model.Tagging;
 public class StorageResource {
 
     @ConfigProperty(name="storage-resource.bucket") String bucket;
+    @ConfigProperty(name="mode", defaultValue="tag") String mode;
     @Inject S3Client s3;
     @Inject Logger logger;
 
@@ -47,13 +51,23 @@ public class StorageResource {
             logger.infov("Created S3 bucket \"{0}\"", bucket);
         }
         logger.infov("S3 bucket \"{0}\" ready", bucket);
+        logger.infov("Using mode: {0}", mode);
     }
 
     @POST
     @Path("{id}")
     public void upload(@RestPath String id, File body) {
         logger.infov("Uploading {0}/{1}", bucket, id);
-        s3.putObject(PutObjectRequest.builder().bucket(bucket).key(id).tagging(Tagging.builder().tagSet(Tag.builder().key("hello").value("world").build()).build()).build(), body.toPath());
+        switch (mode) {
+            case "tag":
+                s3.putObject(PutObjectRequest.builder().bucket(bucket).key(id).tagging(Tagging.builder().tagSet(Tag.builder().key("hello").value("world").build()).build()).build(), body.toPath());
+                break;
+            case "meta":
+                s3.putObject(PutObjectRequest.builder().bucket(bucket).key(id).metadata(Map.of("hello", "world")).build(), body.toPath());
+                break;
+            default:
+                throw new IllegalArgumentException(mode);
+        }
     }
 
     @GET
@@ -65,9 +79,16 @@ public class StorageResource {
 
     @GET
     @Path("{id}/meta")
-    public List<Tag> downloadMeta(@RestPath String id) {
+    public Map<String, String> downloadMeta(@RestPath String id) {
         logger.infov("Downloading metadata {0}/{1}", bucket, id);
-        return s3.getObjectTagging(GetObjectTaggingRequest.builder().bucket(bucket).key(id).build()).tagSet();
+        switch (mode) {
+            case "tag":
+                return s3.getObjectTagging(GetObjectTaggingRequest.builder().bucket(bucket).key(id).build()).tagSet().stream().collect(Collectors.toMap(Tag::key, Tag::value));
+            case "meta":
+                return s3.headObject(HeadObjectRequest.builder().bucket(bucket).key(id).build()).metadata();
+            default:
+                throw new IllegalArgumentException(mode);
+        }
     }
 
     @DELETE

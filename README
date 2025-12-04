@@ -13,6 +13,8 @@ Check out `seaweed` branch and run `./test.bash 4.00` to run this test against S
 
 Testing against current SeaweedFS upstream can be done via `SOURCE_BUILD=true ./test.bash`. A particular upstream branch can be built and tested with `SOURCE_BUILD=true ./test.bash name-of-branch`.
 
+The test uses the Object Tag API by default. `MODE=meta ./test.bash` can be used to run the test using the Object Metadata API instead.
+
 If the test fails with output like below, run it again. This seems to be due to resource constraints on the testcontainer running SeaweedFS:
 
 ```

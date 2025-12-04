@@ -8,4 +8,4 @@ else
   docker build --build-arg SEAWEED_VERSION="${1:-master}" -t mystorage:latest storage -f storage/Dockerfile.source
 fi
 
-./mvnw clean test
+./mvnw clean test -Dmode="${MODE:-tag}"
