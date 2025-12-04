@@ -18,7 +18,7 @@ public class S3Storage
     protected static final String IMAGE_NAME = "mystorage:latest";
     protected static final Map<String, String> envMap =
             Map.of(
-                    "DATA_DIR", "/tmp",
+                    "DATA_DIR", "/data",
                     "IP_BIND", "0.0.0.0",
                     "WEED_V", "4");
     protected final Logger logger = Logger.getLogger(getClass());
@@ -31,7 +31,7 @@ public class S3Storage
                 new GenericContainer<>(DockerImageName.parse(IMAGE_NAME))
                         .withExposedPorts(S3_PORT)
                         .withEnv(envMap)
-                        .withTmpFs(Map.of("/tmp", "rw"))
+                        .withTmpFs(Map.of("/data", "rw"))
                         .withCommand("server", "-s3", "-s3.config", "/etc/storage.conf.json")
                         .waitingFor(Wait.forLogMessage(".*Start Seaweed S3 API Server.*", 1));
         containerNetworkId.ifPresent(container::withNetworkMode);

@@ -1,0 +1,21 @@
+FROM registry.access.redhat.com/ubi9/ubi:9.7 AS builder
+ARG SEAWEED_VERSION
+RUN dnf install -y go git make gettext \
+    && pushd /root \
+    && git clone --depth 1 --branch $SEAWEED_VERSION https://github.com/seaweedfs/seaweedfs \
+    && pushd seaweedfs/weed \
+    && make install \
+    && popd \
+    && popd
+
+ARG SEAWEED_VERSION
+FROM docker.io/chrislusf/seaweedfs:latest AS seaweed
+
+FROM registry.access.redhat.com/ubi9/ubi-micro:9.7
+ARG SEAWEED_VERSION
+LABEL seaweedfs.version=$SEAWEED_VERSION
+USER 185
+COPY storage.conf.json /etc/storage.conf.json
+COPY --from=seaweed /entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+COPY --from=builder /root/go/bin/weed /usr/bin/

@@ -2,6 +2,10 @@
 
 podman rmi mystorage:latest
 
-docker build --build-arg SEAWEED_VERSION="${1:-dev}" -t mystorage:latest storage -f storage/Dockerfile
+if [ -z "${SOURCE_BUILD}" ]; then
+  docker build --build-arg SEAWEED_VERSION="${1:-dev}" -t mystorage:latest storage -f storage/Dockerfile
+else
+  docker build --build-arg SEAWEED_VERSION="${1:-master}" -t mystorage:latest storage -f storage/Dockerfile.source
+fi
 
 ./mvnw clean test
