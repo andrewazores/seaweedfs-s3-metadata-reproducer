@@ -9,4 +9,4 @@ Quarkus (Java)-based reproducer for SeaweedFS S3 Object Tagging bug.
 3. download file Tagging and assert it's as expected
 4. delete file
 
-Check out `seaweed` branch and run `./test.bash 4.00` to run this test against SeaweedFS 4.00, which should pass. Then try with `./test.bash 4.01`, which is observed to fail.
+Check out `seaweed` branch and run `./test.bash 4.00` to run this test against SeaweedFS 4.00, which should pass. Then try with `./test.bash 4.01`, which is observed to fail. Then try with `QUARKUS_S3_CHECKSUM_VALIDATION=false ./test.bash dev`, `QUARKUS_S3_CHUNKED_ENCODING=false ./test.bash dev`, `QUARKUS_S3_CHECKSUM_VALIDATION=true QUARKUS_S3_CHUNKED_ENCODING=false ./test.bash dev`, etc.

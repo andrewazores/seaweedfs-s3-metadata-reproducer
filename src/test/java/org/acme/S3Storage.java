@@ -51,7 +51,8 @@ public class S3Storage
 
         // FIXME since Quarkus 3.20 / S3 SDK 2.30.36 leaving this enabled results in junk
         // 'chunk-signature' data being inserted to PutObjectRequests
-        properties.put("quarkus.s3.checksum-validation", "false");
+        properties.put("quarkus.s3.checksum-validation", Optional.ofNullable(System.getProperty("quarkus.s3.checksum-validation", System.getenv("QUARKUS_S3_CHECKSUM_VALIDATION"))).orElse("true"));
+        properties.put("quarkus.s3.chunked-encoding", Optional.ofNullable(System.getProperty("quarkus.s3.chunked-encoding", System.getenv("QUARKUS_S3_CHUNKED_ENCODING"))).orElse("true"));
 
         return properties;
     }
