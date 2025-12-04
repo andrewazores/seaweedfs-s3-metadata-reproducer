@@ -33,7 +33,7 @@ public class S3Storage
                         .withEnv(envMap)
                         .withTmpFs(Map.of("/tmp", "rw"))
                         .withCommand("server", "-s3", "-s3.config", "/etc/storage.conf.json")
-                        .waitingFor(Wait.forListeningPort());
+                        .waitingFor(Wait.forLogMessage(".*Start Seaweed S3 API Server.*", 1));
         containerNetworkId.ifPresent(container::withNetworkMode);
 
         container.start();
