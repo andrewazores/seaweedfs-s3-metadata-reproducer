@@ -2,6 +2,6 @@
 
 podman rmi mystorage:latest
 
-docker build --build-arg SEAWEED_VERSION="${1:-4.01}" -t mystorage:latest storage -f storage/Dockerfile
+docker build --build-arg SEAWEED_VERSION="${1:-dev}" -t mystorage:latest storage -f storage/Dockerfile
 
 ./mvnw clean test
