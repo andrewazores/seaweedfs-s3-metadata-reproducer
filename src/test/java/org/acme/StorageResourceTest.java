@@ -18,7 +18,7 @@ class StorageResourceTest {
     @Test
     void test() {
         given()
-            .body(StorageResourceTest.class.getResourceAsStream("file.txt"))
+            .body(StorageResourceTest.class.getResourceAsStream(FILENAME))
             .when()
             .post(API_PATH)
             .then()
