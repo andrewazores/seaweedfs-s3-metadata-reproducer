@@ -4,6 +4,7 @@ RUN dnf install -y go git make gettext \
     && pushd /root \
     && git clone --depth 1 --branch $SEAWEED_VERSION https://github.com/seaweedfs/seaweedfs \
     && pushd seaweedfs/weed \
+    && git log -n 1 \
     && make install \
     && popd \
     && popd
