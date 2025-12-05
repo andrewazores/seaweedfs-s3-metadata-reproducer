@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
+import java.io.IOException;
+
 import org.hamcrest.Matchers;
 
 @QuarkusTest
@@ -16,7 +18,7 @@ class StorageResourceTest {
     static final String API_PATH = String.format("/storage/%s", FILENAME);
 
     @Test
-    void test() {
+    void test() throws IOException {
         given()
             .log()
             .all()
@@ -36,7 +38,7 @@ class StorageResourceTest {
             .then()
             .log()
             .all()
-            .body(Matchers.equalTo("some file content" + System.lineSeparator()))
+            .body(Matchers.equalTo(new String(StorageResourceTest.class.getResourceAsStream(FILENAME).readAllBytes())))
             .statusCode(200);
 
         given()
