@@ -57,10 +57,6 @@
             <artifactId>quarkus-amazon-s3</artifactId>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>apache-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
@@ -162,6 +158,52 @@
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
+        </profile>
+        <profile>
+          <id>http-apache</id>
+          <activation>
+            <property>
+              <name>!http</name>
+              <value>apache</value>
+            </property>
+          </activation>
+          <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>apache-client</artifactId>
+            </dependency>
+          </dependencies>
+          <build>
+            <plugins>
+              <plugin>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <version>${surefire-plugin.version}</version>
+                  <configuration>
+                      <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                      <systemPropertyVariables>
+                          <!-- <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager> -->
+                          <quarkus.s3.sync-client.type>apache</quarkus.s3.sync-client.type>
+                          <maven.home>${maven.home}</maven.home>
+                      </systemPropertyVariables>
+                  </configuration>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
+        <profile>
+          <id>http-jdk</id>
+          <activation>
+            <property>
+              <name>http</name>
+              <value>jdk</value>
+            </property>
+          </activation>
+          <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>url-connection-client</artifactId>
+            </dependency>
+          </dependencies>
         </profile>
     </profiles>
 </project>

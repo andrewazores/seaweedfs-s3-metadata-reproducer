@@ -10,4 +10,4 @@ if [ -z "${SKIP_BUILD}" ]; then
     fi
 fi
 
-./mvnw clean test -Dmode="${MODE:-tag}"
+./mvnw -Dhttp="${HTTP:-apache}" clean test -Dmode="${MODE:-tag}"
